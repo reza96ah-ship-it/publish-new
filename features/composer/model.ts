@@ -37,31 +37,30 @@ export function createEmptyComposerDraft(now = new Date()): ComposerDraft {
 export function getSelectedDestinations(
   draft: ComposerDraft,
   destinations: readonly ComposerDestination[],
-):
-ComposerDestination[] {
-  const selected = new Set(draft.destinationIds);
-  return destinations.filter((destination) => selected.has(destination.id));
+): ComposerDestination[] {
+  const selectedIds = new Set(draft.destinationIds);
+  return destinations.filter((destination) => selectedIds.has(destination.id));
 }
 
 export function getComposerCharacterLimit(
   draft: ComposerDraft,
   destinations: readonly ComposerDestination[],
 ): number {
-  const selected = getSelectedDestinations(draft, destinations).filter(
+  const connectedDestinations = getSelectedDestinations(draft, destinations).filter(
     (destination) => destination.connected,
   );
 
-  if (selected.length === 0) {
+  if (connectedDestinations.length === 0) {
     return 3000;
   }
 
-  return Math.min(...selected.map((destination) => destination.characterLimit));
+  return Math.min(
+    ...connectedDestinations.map((destination) => destination.characterLimit),
+  );
 }
 
 export function buildComposerPreviewText(draft: ComposerDraft): string {
-  return [draft.caption.trim(), draft.hashtags.trim()]
-    .filter(Boolean)
-    .join("\n\n");
+  return [draft.caption.trim(), draft.hashtags.trim()].filter(Boolean).join("\n\n");
 }
 
 export function validateComposerDraft(
@@ -79,7 +78,7 @@ export function validateComposerDraft(
       id: "title-required",
       field: "title",
       severity: "error",
-      message: "\u0628\u0631\u0627\u06cc \u0645\u062f\u06cc\u0631\u06cc\u062a\u0020\u062f\u0627\u062e\u0644\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u0020\u06cc\u06a9\u0020\u0639\u0646\u0648\u0627\u0646\u0020\u0648\u0627\u0631\u062f\u0020\u06a9\u0646\u06cc\u062f.",
+      message: "برای مدیریت داخلی محتوا یک عنوان وارد کنید.",
     });
   }
 
@@ -92,7 +91,7 @@ export function validateComposerDraft(
       id: "body-required",
       field: "caption",
       severity: "error",
-      message: "\u0645\u062a\u0646\u060c\u0020\u0631\u0633\u0627\u0646\u0647\u0020\u06cc\u0627\u0020\u067e\u06cc\u0648\u0646\u062f\u0020\u0627\u0635\u0644\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u0020\u0647\u0646\u0648\u0632\u0020\u0648\u0627\u0631\u062f\u0020\u0646\u0634\u062f\u0647\u0020\u0627\u0633\u062a.",
+      message: "متن، رسانه یا پیوند اصلی محتوا هنوز وارد نشده است.",
     });
   }
 
@@ -101,7 +100,7 @@ export function validateComposerDraft(
       id: "destination-required",
       field: "destinations",
       severity: "error",
-      message: "\u062d\u062f\u0627\u0642\u0644\u0020\u06cc\u06a9\u0020\u062d\u0633\u0627\u0628\u0020\u0645\u0642\u0635\u062f\u0020\u0627\u0646\u062a\u062e\u0627\u0628\u0020\u06a9\u0646\u06cc\u062f.",
+      message: "حداقل یک حساب مقصد انتخاب کنید.",
     });
   }
 
@@ -111,10 +110,7 @@ export function validateComposerDraft(
         id: `destination-disconnected-${destination.id}`,
         field: "destinations",
         severity: "error",
-        message: "\u0627\u062a\u0635\u0627\u0644\u0020\u00ab{name}\u00bb\u0020\u0622\u0645\u0627\u062f\u067\u0620\u0646\u062a\u0634\u0627\u0631\u0020\u0646\u06cc\u0633\u062a.".replace(
-          "{name}",
-          destination.accountName,
-        ),
+        message: `اتصال «${destination.accountName}» آماده انتشار نیست.`,
       });
     }
 
@@ -123,10 +119,7 @@ export function validateComposerDraft(
         id: `destination-unsupported-${destination.id}`,
         field: "destinations",
         severity: "error",
-        message: "\u0642\u0627\u0644\u0628\u0020\u0627\u0646\u062a\u062e\u0627\u0628\u200c\u0634\u062f\u0647\u0020\u062f\u0631\u0020\u00ab{name}\u00bb\u0020\u067e\u0634\u062a\u6cc\u0628\u0627\u0646\u06cc\u0020\u0646\u0645\u06cc\u200c\u0634\u0648\u062f.".replace(
-          "{name}",
-          destination.accountName,
-        ),
+        message: `قالب انتخاب‌شده در «${destination.accountName}» پشتیبانی نمی‌شود.`,
       });
     }
 
@@ -135,10 +128,7 @@ export function validateComposerDraft(
         id: `destination-manual-${destination.id}`,
         field: "destinations",
         severity: "warning",
-        message: "\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u062f\u0631\u0020\u00ab{name}\u00bb\u0020\u0628\u0627\u6cc\u062f\u0020\u0628\u0647\u200c\u0635\u0648\u0631\u062a\u0020\u062f\u0633\u062a\u06cc\u0020\u062a\u06a9\u0645\u06cc\u0644\u0020\u0634\u0648\u062f.".replace(
-          "{name}",
-          destination.accountName,
-        ),
+        message: `انتشار در «${destination.accountName}» باید به‌صورت دستی تکمیل شود.`,
       });
     }
   }
@@ -148,7 +138,7 @@ export function validateComposerDraft(
       id: "media-required",
       field: "media",
       severity: "error",
-      message: "\u0628\u0631\u0627\u06cc\u0020\u0642\u0627\u0644\u0628\u0020\u0627\u066\u062a\u062e\u0627\u0628\u200c\u0634\u062d\u0647\u0020\u062d\u062f\u0627\u0642\u0644\u0020\u06cc\u6a9\u0020\u0641\u0627\u06cc\u0644\u0020\u0631\u0633\u0627\u0646\u0647\u0020\u0644\u0627\u0632\u0645\u0020\u0627\u0633\u062a.",
+      message: "برای قالب انتخاب‌شده حداقل یک فایل رسانه لازم است.",
     });
   }
 
@@ -157,7 +147,7 @@ export function validateComposerDraft(
       id: "carousel-needs-more-media",
       field: "media",
       severity: "warning",
-      message: "\u0628\u0631\u0627\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u06cc\u0020\u0686u0646\u062f\u0627\u0633\u0644\u0627\u06cc\u062f\u06cc\u0020\u0628\u0647\u062a\u0631\u0020\u0627\u0633\u062a\u0020\u062d\u062f\u0627\u0642\u0644\u0020\u062f\u0648\u0020\u0631\u0633\u0627\u066\u0647\u0020\u0627\u0636\u0627\u0641\u0647\u0020\u0634\u0648\u062d.",
+      message: "برای محتوای چنداسلایدی بهتر است حداقل دو رسانه اضافه شود.",
     });
   }
 
@@ -172,7 +162,7 @@ export function validateComposerDraft(
         id: "link-invalid",
         field: "link",
         severity: "error",
-        message: "\u6cc\u06a9\u0020\u0646\u0634\u0627\u0646\u06cc\u0020\u0645\u0639\u062a\u0628\u0631\u0020\u0628\u0627\u0020\u0068http\u0020\u6cc\u0627\u0020\u0068https\u0020\u0648\u0627\u0631\u062f\u0020\u06a9\u0646\u06cc\u062f.",
+        message: "یک نشانی معتبر با http یا https وارد کنید.",
       });
     }
   }
@@ -182,10 +172,7 @@ export function validateComposerDraft(
       id: "character-limit",
       field: "caption",
       severity: "error",
-      message: "\u0645\u062a\u0646\u0020\u007cb{count}\u0020\u0646\u0648\u066cc\u0633\u0647\u0020\u0628\u06cc\u0634\u062a\u0631\u0020\u0627\u0632\u0020\u0645\u062d\u062f\u0648\u062f\u06cc\u062a\u0020\u0645\u0642\u0635\u062f\u0647\u0627\u0020\u0627\u0633\u062a.".replace(
-        "{count}",
-        String(characterCount - characterLimit),
-      ),
+      message: `متن ${characterCount - characterLimit} نویسه بیشتر از محدودیت مقصدها است.`,
     });
   }
 
@@ -198,7 +185,7 @@ export function validateComposerDraft(
       id: "hashtag-count",
       field: "caption",
       severity: "warning",
-      message: "\u062a\u0639\u062f\u0627\u062f\u0020\u0632\u06cc\u0627\u062f\u0020\u0647\u0634\u062a\u06af\u200c\u0647\u0627\u0020\u0645\u06cc\u062a\u0648\u0627\u066\u062f\u0020\u062e\u0648\u0627\u0646\u0627\u6cc\u0020\u0645\u062d\u062d\u062a\u0648\u0627\u0020\u0631\u0627\u0020\u06a9\u0627\u0647\u0634\u0020\u062f\u0647\u062f.",
+      message: "تعداد زیاد هشتگ‌ها می‌تواند خوانایی محتوا را کاهش دهد.",
     });
   }
 
@@ -207,7 +194,7 @@ export function validateComposerDraft(
       id: "approval-pending",
       field: "approval",
       severity: "error",
-      message: "\u0645\u062d\u062a\u0648\u0627\u0020\u0647\u0646\u0648\u0632\u0020\u062f\u0631\u0020\u0627\u0646\u062a\u0638\u0627\u0631\u0020\u062a\u0623\u6cc\u06cc\u062f\u0020\u0627\u0633\u062a.",
+      message: "محتوا هنوز در انتظار تأیید است.",
     });
   }
 
@@ -216,7 +203,7 @@ export function validateComposerDraft(
       id: "approval-rejected",
       field: "approval",
       severity: "error",
-      message: "\u0646\u0633\u062e\u0647\u0020\u0641\u0639\u0644\u06cc\u0020\u0645\u062d\u062f\u062a\u0648\u0627\u0020\u0631\u062f\u0020\u0634\u062f\u0647\u0020\u0648\u0020\u0628\u0627\u06cc\u062f\u0020\u0627\u0635\u0644\u0627\u062d\u0020\u0634\u0648\u062f.",
+      message: "نسخه فعلی محتوا رد شده و باید اصلاح شود.",
     });
   }
 
@@ -226,7 +213,7 @@ export function validateComposerDraft(
         id: "schedule-required",
         field: "schedule",
         severity: "error",
-        message: "\u0632\u0645\u0627\u0646\u0020\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u0631\u0627\u0020\u0645\u0634\u062e\u0635\u0020\u06a9\u0646\u06cc\u062f.",
+        message: "زمان انتشار را مشخص کنید.",
       });
     } else {
       const scheduledAt = new Date(draft.scheduledAt);
@@ -238,7 +225,7 @@ export function validateComposerDraft(
           id: "schedule-future",
           field: "schedule",
           severity: "error",
-          message: "\u0632\u0645\u0627\u0646\u0020\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u0628\u0627\u06cc\u062f\u0020\u062f\u0631\u0020\u0622\u06cc\u0646\u062f\u0647\u0020\u0628\u0627\u0634\u062f.",
+          message: "زمان انتشار باید در آینده باشد.",
         });
       }
     }
