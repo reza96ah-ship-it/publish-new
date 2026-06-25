@@ -3,6 +3,7 @@ import type {
   PublishingJob,
   PublishingJobStatus,
   PublishingPlatform,
+  PublishingQueueTab,
   PublishingStatusMeta,
   PublishingSummary,
 } from "./types";
@@ -49,10 +50,7 @@ const priorityByStatus: Record<PublishingJobStatus, number> = {
 };
 
 function timestamp(value?: string): number {
-  if (!value) {
-    return Number.MAX_SAFE_INTEGER;
-  }
-
+  if (!value) return Number.MAX_SAFE_INTEGER;
   const parsed = Date.parse(value);
   return Number.isNaN(parsed) ? Number.MAX_SAFE_INTEGER : parsed;
 }
@@ -78,10 +76,7 @@ function searchableText(job: PublishingJob): string {
 export function sortPublishingJobs(jobs: readonly PublishingJob[]): PublishingJob[] {
   return [...jobs].sort((first, second) => {
     const priorityDifference = priorityByStatus[first.status] - priorityByStatus[second.status];
-    if (priorityDifference !== 0) {
-      return priorityDifference;
-    }
-
+    if (priorityDifference !== 0) return priorityDifference;
     return timestamp(first.scheduledAt ?? first.startedAt) - timestamp(second.scheduledAt ?? second.startedAt);
   });
 }
@@ -94,21 +89,12 @@ export function filterPublishingJobs(
 
   return sortPublishingJobs(
     jobs.filter((job) => {
-      if (filters.tab !== "all" && STATUS_META[job.status].group !== filters.tab) {
-        return false;
-      }
-
-      if (filters.status !== "all" && job.status !== filters.status) {
-        return false;
-      }
-
+      if (filters.tab !== "all" && STATUS_META[job.status].group !== filters.tab) return false;
+      if (filters.status !== "all" && job.status !== filters.status) return false;
       if (
         filters.platform !== "all" &&
         !job.targets.some((target) => target.platform === filters.platform)
-      ) {
-        return false;
-      }
-
+      ) return false;
       return query.length === 0 || searchableText(job).includes(query);
     }),
   );
@@ -127,28 +113,27 @@ export function summarizePublishingJobs(jobs: readonly PublishingJob[]): Publish
 
   for (const job of jobs) {
     const group = STATUS_META[job.status].group;
-    summary[group] += 1;
-
-    if (job.status === "failed") {
-      summary.failed += 1;
-    }
-    if (job.status === "paused") {
-      summary.paused += 1;
-    }
-    if (job.status === "published") {
-      summary.published += 1;
-    }
+    if (group === "live") summary.live += 1;
+    if (group === "upcoming") summary.upcoming += 1;
+    if (group === "action") summary.action += 1;
+    if (job.status === "failed") summary.failed += 1;
+    if (job.status === "paused") summary.paused += 1;
+    if (job.status === "published") summary.published += 1;
   }
 
   return summary;
 }
 
+export function countPublishingTab(
+  jobs: readonly PublishingJob[],
+  tab: PublishingQueueTab,
+): number {
+  if (tab === "all") return jobs.length;
+  return jobs.filter((job) => STATUS_META[job.status].group === tab).length;
+}
+
 export function canRetryPublishingJob(job: PublishingJob): boolean {
-  return (
-    job.status === "failed" &&
-    job.latestError?.retryable === true &&
-    job.retryCount < job.maxRetryCount
-  );
+  return job.status === "failed" && job.latestError?.retryable === true && job.retryCount < job.maxRetryCount;
 }
 
 export function canPausePublishingJob(job: PublishingJob): boolean {
@@ -160,14 +145,9 @@ export function canResumePublishingJob(job: PublishingJob): boolean {
 }
 
 export function formatPublishingDate(value?: string): string {
-  if (!value) {
-    return "بدون زمان‌بندی";
-  }
-
+  if (!value) return "بدون زمان‌بندی";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "زمان نامعتبر";
-  }
+  if (Number.isNaN(date.getTime())) return "زمان نامعتبر";
 
   return new Intl.DateTimeFormat("fa-IR", {
     month: "short",
