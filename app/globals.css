@@ -7,10 +7,14 @@
   --color-canvas: var(--n-canvas);
   --color-ink-primary: var(--n-text-primary);
   --color-ink-secondary: var(--n-text-secondary);
+  --color-ink-tertiary: var(--n-text-tertiary);
   --color-accent: var(--n-accent);
+  --color-accent-hover: var(--n-accent-hover);
+  --color-accent-soft: var(--n-accent-soft);
   --color-success: var(--n-success);
   --color-warning: var(--n-warning);
   --color-danger: var(--n-danger);
+  --color-info: var(--n-info);
   --radius-panel: 1.75rem;
   --radius-control: 1rem;
 }
@@ -20,15 +24,21 @@
   --n-canvas: oklch(0.976 0.008 255);
   --n-text-primary: rgb(15 23 42 / 0.95);
   --n-text-secondary: rgb(30 41 59 / 0.68);
+  --n-text-tertiary: rgb(51 65 85 / 0.48);
   --n-accent: oklch(0.61 0.19 263);
+  --n-accent-hover: oklch(0.56 0.20 263);
+  --n-accent-soft: oklch(0.72 0.14 263 / 0.16);
   --n-success: oklch(0.62 0.17 153);
   --n-warning: oklch(0.72 0.16 76);
   --n-danger: oklch(0.61 0.22 27);
+  --n-info: oklch(0.64 0.16 240);
   --n-panel-bg: rgb(255 255 255 / 0.86);
   --n-panel-border: rgb(255 255 255 / 0.82);
   --n-panel-divider: rgb(30 41 59 / 0.08);
   --n-control-bg: rgb(255 255 255 / 0.56);
   --n-control-border: rgb(255 255 255 / 0.72);
+  --n-hover: rgb(255 255 255 / 0.60);
+  --n-selected: oklch(0.72 0.13 250 / 0.18);
   --n-shadow-panel: 0 12px 36px rgb(15 23 42 / 0.07);
   --n-shadow-floating: 0 18px 48px rgb(15 23 42 / 0.12);
 }
@@ -38,15 +48,21 @@
   --n-canvas: oklch(0.155 0.022 258);
   --n-text-primary: rgb(248 250 252 / 0.96);
   --n-text-secondary: rgb(226 232 240 / 0.72);
+  --n-text-tertiary: rgb(203 213 225 / 0.50);
   --n-accent: oklch(0.72 0.15 259);
+  --n-accent-hover: oklch(0.76 0.14 259);
+  --n-accent-soft: oklch(0.63 0.15 250 / 0.22);
   --n-success: oklch(0.72 0.16 151);
   --n-warning: oklch(0.79 0.15 78);
-  --n-danger: oklch(0.7 0.2 25);
+  --n-danger: oklch(0.70 0.20 25);
+  --n-info: oklch(0.73 0.14 235);
   --n-panel-bg: rgb(22 29 43 / 0.88);
-  --n-panel-border: rgb(255 255 255 / 0.1);
+  --n-panel-border: rgb(255 255 255 / 0.10);
   --n-panel-divider: rgb(255 255 255 / 0.075);
   --n-control-bg: rgb(28 36 53 / 0.62);
   --n-control-border: rgb(255 255 255 / 0.13);
+  --n-hover: rgb(255 255 255 / 0.065);
+  --n-selected: oklch(0.62 0.16 250 / 0.23);
 }
 
 @layer base {
