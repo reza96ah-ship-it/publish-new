@@ -1,4 +1,5 @@
 import type {
+  ComposerContentType,
   ComposerDestination,
   ComposerDraft,
   ComposerReadiness,
@@ -7,7 +8,12 @@ import type {
   ComposerValidationIssue,
 } from "./types";
 
-const mediaRequiredTypes = new Set(["image", "video", "carousel", "story"]);
+const mediaRequiredTypes = new Set<ComposerContentType>([
+  "image",
+  "video",
+  "carousel",
+  "story",
+]);
 
 export function createEmptyComposerDraft(now = new Date()): ComposerDraft {
   return {
@@ -31,7 +37,8 @@ export function createEmptyComposerDraft(now = new Date()): ComposerDraft {
 export function getSelectedDestinations(
   draft: ComposerDraft,
   destinations: readonly ComposerDestination[],
-): ComposerDestination[] {
+):
+ComposerDestination[] {
   const selected = new Set(draft.destinationIds);
   return destinations.filter((destination) => selected.has(destination.id));
 }
@@ -52,7 +59,9 @@ export function getComposerCharacterLimit(
 }
 
 export function buildComposerPreviewText(draft: ComposerDraft): string {
-  return [draft.caption.trim(), draft.hashtags.trim()].filter(Boolean).join("\n\n");
+  return [draft.caption.trim(), draft.hashtags.trim()]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 export function validateComposerDraft(
@@ -70,17 +79,20 @@ export function validateComposerDraft(
       id: "title-required",
       field: "title",
       severity: "error",
-      message: "Ø¨Ø±Ø§ÛŒ Ù…Ø¯ÛŒØ±ÛŒØª Ø¯Ø§Ø®Ù„ÛŒ Ù…Ø­ØªÙˆØ§ ÛŒÚ© Ø¹Ù†ÙˆØ§Ù† ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯.",
+      message: "\u0628\u0631\u0627\u06cc \u0645\u062f\u06cc\u0631\u06cc\u062a\u0020\u062f\u0627\u062e\u0644\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u0020\u06cc\u06a9\u0020\u0639\u0646\u0648\u0627\u0646\u0020\u0648\u0627\u0631\u062f\u0020\u06a9\u0646\u06cc\u062f.",
     });
   }
 
-  const hasBody = Boolean(draft.caption.trim() || draft.media.length || draft.linkUrl.trim());
+  const hasBody = Boolean(
+    draft.caption.trim() || draft.media.length > 0 || draft.linkUrl.trim(),
+  );
+
   if (!hasBody) {
     issues.push({
       id: "body-required",
       field: "caption",
       severity: "error",
-      message: "Ù…ØªÙ†ØŒ Ø±Ø³Ø§Ù†Ù‡ ÛŒØ§ Ù¾ÛŒÙˆÙ†Ø¯ Ø§ØµÙ„ÛŒ Ù…Ø­ØªÙˆØ§ Ù‡Ù†ÙˆØ² ÙˆØ§Ø±Ø¯ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.",
+      message: "\u0645\u062a\u0646\u060c\u0020\u0631\u0633\u0627\u0646\u0647\u0020\u06cc\u0627\u0020\u067e\u06cc\u0648\u0646\u062f\u0020\u0627\u0635\u0644\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u0020\u0647\u0646\u0648\u0632\u0020\u0648\u0627\u0631\u062f\u0020\u0646\u0634\u062f\u0647\u0020\u0627\u0633\u062a.",
     });
   }
 
@@ -89,17 +101,20 @@ export function validateComposerDraft(
       id: "destination-required",
       field: "destinations",
       severity: "error",
-      message: "Ø­Ø¯Ø§Ù‚Ù„ ÛŒÚ© Ø­Ø³Ø§Ø¨ Ù…Ù‚ØµØ¯ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯.",
+      message: "\u062d\u062f\u0627\u0642\u0644\u0020\u06cc\u06a9\u0020\u062d\u0633\u0627\u0628\u0020\u0645\u0642\u0635\u062f\u0020\u0627\u0646\u062a\u062e\u0627\u0628\u0020\u06a9\u0646\u06cc\u062f.",
     });
   }
 
   for (const destination of selected) {
     if (!destination.connected) {
       issues.push({
-        id: `destination-disconned-${destination.id}`,
+        id: `destination-disconnected-${destination.id}`,
         field: "destinations",
         severity: "error",
-        message: `Ø§ØªØµØ§Ù„ Â«${destination.accountName}Â» Ø¢Ù…Ø§Ø¯Ù‡ Ø§Ù†ØªØ´Ø§Ø± Ù†ÛŒØ³Øª.`,
+        message: "\u0627\u062a\u0635\u0627\u0644\u0020\u00ab{name}\u00bb\u0020\u0622\u0645\u0627\u062f\u067\u0620\u0646\u062a\u0634\u0627\u0631\u0020\u0646\u06cc\u0633\u062a.".replace(
+          "{name}",
+          destination.accountName,
+        ),
       });
     }
 
@@ -108,7 +123,10 @@ export function validateComposerDraft(
         id: `destination-unsupported-${destination.id}`,
         field: "destinations",
         severity: "error",
-        message: `Ù‚Ø§Ù„Ø¨ Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡ Ø¯Ø± Â«${destination.accountName}Â» Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ Ù†Ù…ÛŒâ€ŒØ´ÙˆØ¯.`,
+        message: "\u0642\u0627\u0644\u0628\u0020\u0627\u0646\u062a\u062e\u0627\u0628\u200c\u0634\u062f\u0647\u0020\u062f\u0631\u0020\u00ab{name}\u00bb\u0020\u067e\u0634\u062a\u6cc\u0628\u0627\u0646\u06cc\u0020\u0646\u0645\u06cc\u200c\u0634\u0648\u062f.".replace(
+          "{name}",
+          destination.accountName,
+        ),
       });
     }
 
@@ -117,7 +135,10 @@ export function validateComposerDraft(
         id: `destination-manual-${destination.id}`,
         field: "destinations",
         severity: "warning",
-        message: `Ø§Ù†ØªØ´Ø§Ø± Ø¯Ø± Â«${destination.accountName}Â» Ø¨Ø§ÛŒØ¯ Ø¨Ù‡â€ŒØµÙˆØ±Øª Ø¯Ø³ØªÛŒ ØªÚ©Ù…ÛŒÙ„ Ø´ÙˆØ¯.`,
+        message: "\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u062f\u0631\u0020\u00ab{name}\u00bb\u0020\u0628\u0627\u6cc\u062f\u0020\u0628\u0647\u200c\u0635\u0648\u0631\u062a\u0020\u062f\u0633\u062a\u06cc\u0020\u062a\u06a9\u0645\u06cc\u0644\u0020\u0634\u0648\u062f.".replace(
+          "{name}",
+          destination.accountName,
+        ),
       });
     }
   }
@@ -127,7 +148,7 @@ export function validateComposerDraft(
       id: "media-required",
       field: "media",
       severity: "error",
-      message: "Ø¨Ø±Ø§ÛŒ Ù‚Ø§Ù„Ø¨ Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡ Ø­Ø¯Ø§Ù‚Ù„ ÛŒÚ© ÙØ§ÛŒÙ„ Ø±Ø³Ø§Ù†Ù‡ Ù„Ø§Ø²Ù… Ø§Ø³Øª.",
+      message: "\u0628\u0631\u0627\u06cc\u0020\u0642\u0627\u0644\u0628\u0020\u0627\u066\u062a\u062e\u0627\u0628\u200c\u0634\u062d\u0647\u0020\u062d\u062f\u0627\u0642\u0644\u0020\u06cc\u6a9\u0020\u0641\u0627\u06cc\u0644\u0020\u0631\u0633\u0627\u0646\u0647\u0020\u0644\u0627\u0632\u0645\u0020\u0627\u0633\u062a.",
     });
   }
 
@@ -136,7 +157,7 @@ export function validateComposerDraft(
       id: "carousel-needs-more-media",
       field: "media",
       severity: "warning",
-      message: "Ø¨Ø±Ø§ÛŒ Ù…Ø­ØªÙˆØ§ÛŒ Ú†Ù†Ø¯Ø§Ø³Ù„Ø§ÛŒØ¯ÛŒ Ø¨Ù‡ØªØ± Ø§Ø³Øª Ø­Ø¯Ø§Ù‚Ù„ Ø¯Ùˆ Ø±Ø³Ø§Ù†Ù‡ Ø§Ø¶Ø§ÙÙ‡ Ø´ÙˆØ¯.",
+      message: "\u0628\u0631\u0627\u06cc\u0020\u0645\u062d\u062a\u0648\u0627\u06cc\u0020\u0686u0646\u062f\u0627\u0633\u0644\u0627\u06cc\u062f\u06cc\u0020\u0628\u0647\u062a\u0631\u0020\u0627\u0633\u062a\u0020\u062d\u062f\u0627\u0642\u0644\u0020\u062f\u0648\u0020\u0631\u0633\u0627\u066\u0647\u0020\u0627\u0636\u0627\u0641\u0647\u0020\u0634\u0648\u062d.",
     });
   }
 
@@ -151,7 +172,7 @@ export function validateComposerDraft(
         id: "link-invalid",
         field: "link",
         severity: "error",
-        message: "ÛŒÚ© Ù†Ø´Ø§Ù†ÛŒ Ù…Ø¹ØªØ¨Ø± Ø¨Ø§ http ÛŒØ§ https ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯.",
+        message: "\u6cc\u06a9\u0020\u0646\u0634\u0627\u0646\u06cc\u0020\u0645\u0639\u062a\u0628\u0631\u0020\u0628\u0627\u0020\u0068http\u0020\u6cc\u0627\u0020\u0068https\u0020\u0648\u0627\u0631\u062f\u0020\u06a9\u0646\u06cc\u062f.",
       });
     }
   }
@@ -161,19 +182,23 @@ export function validateComposerDraft(
       id: "character-limit",
       field: "caption",
       severity: "error",
-      message: `Ù…ØªÙ† ${characterCount - characterLimit} Ù†ÙˆÛŒØ³Ù‡ Ø¨ÛŒØ´ØªØ± Ø§Ø² Ù…Ø­Ø¯ÙˆØ¯ÛŒØª Ù…Ù‚ØµØ¯Ù‡Ø§ Ø§Ø³Øª.`,
+      message: "\u0645\u062a\u0646\u0020\u007cb{count}\u0020\u0646\u0648\u066cc\u0633\u0647\u0020\u0628\u06cc\u0634\u062a\u0631\u0020\u0627\u0632\u0020\u0645\u062d\u062f\u0648\u062f\u06cc\u062a\u0020\u0645\u0642\u0635\u062f\u0647\u0627\u0020\u0627\u0633\u062a.".replace(
+        "{count}",
+        String(characterCount - characterLimit),
+      ),
     });
   }
 
   const hashtagCount = draft.hashtags
     .split(/\s+/)
     .filter((item) => item.startsWith("#")).length;
+
   if (hashtagCount > 20) {
     issues.push({
       id: "hashtag-count",
       field: "caption",
       severity: "warning",
-      message: "ØªØ¹Ø¯Ø§Ø¯ Ø²ÛŒØ§Ø¯ Ù‡Ø´ØªÚ¯â€ŒÙ‡Ø§ Ù…ÛŒâ€ŒØªÙˆØ§Ù†Ø¯ Ø®ÙˆØ§Ù†Ø§ÛŒÛŒ Ù…Ø­ØªÙˆØ§ Ø±Ø§ Ú©Ø§Ù‡Ø´ Ø¯Ù‡Ø¯.",
+      message: "\u062a\u0639\u062f\u0627\u062f\u0020\u0632\u06cc\u0627\u062f\u0020\u0647\u0634\u062a\u06af\u200c\u0647\u0627\u0020\u0645\u06cc\u062a\u0648\u0627\u066\u062f\u0020\u062e\u0648\u0627\u0646\u0627\u6cc\u0020\u0645\u062d\u062d\u062a\u0648\u0627\u0020\u0631\u0627\u0020\u06a9\u0627\u0647\u0634\u0020\u062f\u0647\u062f.",
     });
   }
 
@@ -182,7 +207,7 @@ export function validateComposerDraft(
       id: "approval-pending",
       field: "approval",
       severity: "error",
-      message: "Ù…Ø­ØªÙˆØ§ Ù‡Ù†ÙˆØ² Ø¯Ø± Ø§Ù†ØªØ¸Ø§Ø± ØªØ£ÛŒÛŒØ¯ Ø§Ø³Øª.",
+      message: "\u0645\u062d\u062a\u0648\u0627\u0020\u0647\u0646\u0648\u0632\u0020\u062f\u0631\u0020\u0627\u0646\u062a\u0638\u0627\u0631\u0020\u062a\u0623\u6cc\u06cc\u062f\u0020\u0627\u0633\u062a.",
     });
   }
 
@@ -191,7 +216,7 @@ export function validateComposerDraft(
       id: "approval-rejected",
       field: "approval",
       severity: "error",
-      message: "Ù†Ø³Ø®Ù‡ ÙØ¹Ù„ÛŒ Ù…Ø­ØªÙˆØ§ Ø±Ø¯ Ø´Ø¯Ù‡ Ùˆ Ø¨Ø§ÛŒØ¯ Ø§ØµÙ„Ø§Ø­ Ø´ÙˆØ¯.",
+      message: "\u0646\u0633\u062e\u0647\u0020\u0641\u0639\u0644\u06cc\u0020\u0645\u062d\u062f\u062a\u0648\u0627\u0020\u0631\u062f\u0020\u0634\u062f\u0647\u0020\u0648\u0020\u0628\u0627\u06cc\u062f\u0020\u0627\u0635\u0644\u0627\u062d\u0020\u0634\u0648\u062f.",
     });
   }
 
@@ -201,27 +226,90 @@ export function validateComposerDraft(
         id: "schedule-required",
         field: "schedule",
         severity: "error",
-        message: "Ø²Ù…Ø§Ù† Ø§Ù†ØªØ´Ø§Ø± Ø±Ø§ Ù…Ø¶+¶-H6ªva¶ã6+Ëˆ‹ˆJNÂˆH[ÙHÂˆÛÛœİØÚY[Y]H™]È]J˜YœØÚY[Y]
-NÂˆYˆ
-[X™\‹š\Ó˜SŠØÚY[Y]™Ù][YJ
-JHØÚY[Y]™Ù][YJ
-HH›İË™Ù][YJ
-JHÂˆ\ÜİY\Ëœ\Ú
-ÂˆYˆœØÚY[KY]\™H‹ˆšY[ˆœØÚY[H‹ˆÙ]™\š]Nˆ™\œ›Üˆ‹ˆY\ÜØYÙNˆ¶,¶av)öaˆ6)öa¶*¶-6)ö,H6*6)öã6+È6+ö,H6(¶ã6a¶+öaÈ6*6)ö-6+Ëˆ‹ˆJNÂˆBˆBˆB‚ˆÛÛœİ\œ›ÜÛİ[H\ÜİY\Ë™š[\Š
-\ÜİYJHOˆ\ÜİYKœÙ]™\š]HOOH™\œ›ÜˆŠK›[™İÂˆÛÛœİØ\›š[™ĞÛİ[H\ÜİY\Ë›[™İH\œ›ÜÛİ[Â‚ˆ™]\›ˆÂˆ™XYNˆ\œ›ÜÛİ[OOHˆ\œ›ÜÛİ[ˆØ\›š[™ĞÛİ[ˆ\ÜİY\ËˆÚ\˜Xİ\“[Z]ˆÚ\˜Xİ\Ûİ[ˆNÂŸB‚™^Ü[˜İ[ÛˆÛÛ\ÜÙ\”İ\\ĞÛÛ\]Jˆİ\ˆÛÛ\ÜÙ\”İ\Yˆ˜YˆÛÛ\ÜÙ\‘˜Yˆ\İ[˜][ÛœÎˆ™XYÛ›HÛÛ\ÜÙ\‘\İ[˜][Û–×KŠNˆ›ÛÛX[ˆÂˆYˆ
-İ\OOH˜ÛÛ[ŠHÂˆ™]\›ˆ›ÛÛX[Š˜Y]Kš[J
-H	‰ˆ
-˜Y˜Ø\[Û‹š[J
-H˜Y›[šÕ\›š[J
-JJNÂˆB‚ˆYˆ
-İ\OOH™\İ[˜][ÛœÈŠHÂˆ™]\›ˆÙ]Ù[XİY\İ[˜][ÛœÊ˜Y\İ[˜][ÛœÊKœÛÛYJˆ
-\İ[˜][ÛŠHOˆ\İ[˜][Û‹˜ÛÛ›™XİYˆ
-NÂˆB‚ˆYˆ
-İ\OOH›YYXHŠHÂˆ™]\›ˆ[YYXT™\]Z\™Y\\Ëš\Ê˜Y˜ÛÛ[\JH˜Y›YYXK›[™İˆÂˆB‚ˆ™]\›ˆ˜[Y]PÛÛ\ÜÙ\‘˜Y
-˜Y\İ[˜][ÛœÊKœ™XYNÂŸB‚™^Ü[˜İ[ÛˆÜ™X]PÛÛ\ÜÙ\”İX›Z\ÜÚ[ÛŠˆ˜YˆÛÛ\ÜÙ\‘˜YˆXİ[ÛˆÛÛ\ÜÙ\”İX›Z\ÜÚ[Û–È˜Xİ[Ûˆ—KˆİX›Z]Y]H™]È]J
-KŠNˆÛÛ\ÜÙ\”İX›Z\ÜÚ[ÛˆÂˆ™]\›ˆÂˆ˜YˆÂˆ‹‹™˜Yˆ\]Y]ˆİX›Z]Y]ÒTÓÔİš[™Ê
-KˆKˆXİ[Û‹ˆİX›Z]Y]ˆİX›Z]Y]ÒTÓÔİš[™Ê
-KˆNÂŸB‚™^Ü[˜İ[Ûˆ˜Y›Ü”İÜ˜YÙJ˜YˆÛÛ\ÜÙ\‘˜Y
-NˆÛÛ\ÜÙ\‘˜YÂˆ™]\›ˆÂˆ‹‹™˜YˆYYXNˆ˜Y›YYXK›X\
+        message: "\u0632\u0645\u0627\u0646\u0020\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u0631\u0627\u0020\u0645\u0634\u062e\u0635\u0020\u06a9\u0646\u06cc\u062f.",
+      });
+    } else {
+      const scheduledAt = new Date(draft.scheduledAt);
+      if (
+        Number.isNaN(scheduledAt.getTime()) ||
+        scheduledAt.getTime() <= now.getTime()
+      ) {
+        issues.push({
+          id: "schedule-future",
+          field: "schedule",
+          severity: "error",
+          message: "\u0632\u0645\u0627\u0646\u0020\u0627\u0646\u062a\u0634\u0627\u0631\u0020\u0628\u0627\u06cc\u062f\u0020\u062f\u0631\u0020\u0622\u06cc\u0646\u062f\u0647\u0020\u0628\u0627\u0634\u062f.",
+        });
+      }
+    }
+  }
 
-È™]šY]Õ\›ˆÜ™]šY]Õ\›‹‹›YYXHJHOˆYYXJKˆNÂŸB
+  const errorCount = issues.filter((issue) => issue.severity === "error").length;
+  const warningCount = issues.length - errorCount;
+
+  return {
+    ready: errorCount === 0,
+    errorCount,
+    warningCount,
+    issues,
+    characterLimit,
+    characterCount,
+  };
+}
+
+export function composerStepIsComplete(
+  step: ComposerStepId,
+  draft: ComposerDraft,
+  destinations: readonly ComposerDestination[],
+): boolean {
+  if (step === "content") {
+    return Boolean(
+      draft.title.trim() &&
+        (draft.caption.trim() || draft.linkUrl.trim() || draft.media.length > 0),
+    );
+  }
+
+  if (step === "destinations") {
+    return getSelectedDestinations(draft, destinations).some(
+      (destination) => destination.connected,
+    );
+  }
+
+  if (step === "media") {
+    return !mediaRequiredTypes.has(draft.contentType) || draft.media.length > 0;
+  }
+
+  return validateComposerDraft(draft, destinations).ready;
+}
+
+export function createComposerSubmission(
+  draft: ComposerDraft,
+  action: ComposerSubmission["action"],
+  submittedAt = new Date(),
+): ComposerSubmission {
+  const timestamp = submittedAt.toISOString();
+
+  return {
+    draft: {
+      ...draft,
+      media: draft.media.map((media) => ({ ...media })),
+      destinationIds: [...draft.destinationIds],
+      updatedAt: timestamp,
+    },
+    action,
+    submittedAt: timestamp,
+  };
+}
+
+export function draftForStorage(draft: ComposerDraft): ComposerDraft {
+  return {
+    ...draft,
+    destinationIds: [...draft.destinationIds],
+    media: draft.media.map((media) => ({
+      id: media.id,
+      name: media.name,
+      mimeType: media.mimeType,
+      sizeBytes: media.sizeBytes,
+    })),
+  };
+}
