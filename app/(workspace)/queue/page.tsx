@@ -1,2 +1,6 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
-export default function Page() { return <PlaceholderPage title="انتشار" description="صف انتشار، تلاش‌های مجدد و وضعیت پردازش مقصدها." />; }
+import { publishingFixtures } from "@/features/publishing/fixtures";
+import { PublishingWorkspace } from "@/features/publishing/publishing-workspace";
+
+export default function PublishingPage() {
+  return <PublishingWorkspace initialJobs={publishingFixtures} />;
+}

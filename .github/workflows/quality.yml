@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - phase-0-stabilize
+      - "phase-*"
   pull_request:
     branches:
       - main
