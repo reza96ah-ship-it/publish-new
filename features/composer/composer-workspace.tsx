@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  composerStepIsComplete,
   createComposerSubmission,
   createEmptyComposerDraft,
   draftForStorage,
@@ -50,7 +49,9 @@ export function ComposerWorkspace() {
     [draft],
   );
 
-  const activeStepIndex = composerSteps.findIndex((step) => step.id === activeStep);
+  const activeStepIndex = composerSteps.findIndex(
+    (step) => step.id === activeStep,
+  );
 
   useEffect(() => {
     try {

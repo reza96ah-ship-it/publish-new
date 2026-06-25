@@ -6,7 +6,8 @@ import {
   ImageIcon,
   Link2,
   MoreHorizontal,
-  Send,} from "lucide-react";
+  Send,
+} from "lucide-react";
 import { PLATFORM_LABELS } from "@/features/publishing/model";
 import {
   buildComposerPreviewText,
@@ -64,9 +65,9 @@ export function ComposerPreview({
               N
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold">Ù†Ø´Ø±ÙŒÙ†Ùˆ</p>
+              <p className="truncate text-sm font-bold">Ù†Ø´Ø±ÛŒÙ†Ùˆ</p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØµ Ù…Ø­ØªÙˆØ§ÛŒ Ú†Ù†Ø¯Ù¾Ù„ØªÙØ±Ù…ÛŒ
+                Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ Ù…Ø­ØªÙˆØ§ÛŒ Ú†Ù†Ø¯Ù¾Ù„ØªÙØ±Ù…ÛŒ
               </p>
             </div>
             <MoreHorizontal className="size-5 text-slate-400" aria-hidden="true" />
@@ -93,7 +94,7 @@ export function ComposerPreview({
                 <p className="mt-3 text-xs leading-6">
                   {draft.media.length
                     ? `${draft.media.length.toLocaleString("fa-IR")} Ø±Ø³Ø§Ù†Ù‡ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯Ù‡ Ø§Ø³Øª`
-                    : "Ø¨Ø±Ø§ÛŒ Ø§ÛŒÙ† Ù…Ø­ØªÙˆØ§ Ù‡Ù†ÙˆØ² Ø±Ø³Ø§Ù†Ù‡â€ŒØ§ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª")}
+                    : "Ø¨Ø±Ø§ÛŒ Ø§ÛŒÙ† Ù…Ø­ØªÙˆØ§ Ù‡Ù†ÙˆØ² Ø±Ø³Ø§Ù†Ù‡â€ŒØ§ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª"}
                 </p>
               </div>
             )}
@@ -111,7 +112,7 @@ export function ComposerPreview({
               </span>
               <span className="inline-flex items-center gap-1">
                 <Send className="size-4" aria-hidden="true" />
-                {draft.scheduleMode === "now" ? "Ø§ÙˆÙ„Ø¨ÛŒÙ† ÙØ±ØµØª" : "Ø²Ù…Ø§Ù†â€ŒØ¨Ù†Ø¯ÛŒâ€ŒØ´Ø¯Ù‡"}
+                {draft.scheduleMode === "now" ? "Ø§ÙˆÙ„ÛŒÙ† ÙØ±ØµØª" : "Ø²Ù…Ø§Ù†â€ŒØ¨Ù†Ø¯ÛŒâ€ŒØ´Ø¯Ù‡"}
               </span>
             </div>
           </div>
@@ -133,4 +134,45 @@ export function ComposerPreview({
             </div>
           ) : (
             <p className="mt-3 text-xs leading-6 text-ink-secondary">
-              Ù‡Ù†ÙˆØ²ffb×b¿n0ƒb£bÇbŸn0ƒbŸfb«bÓbŸbÄƒbŸfb«b»bŸb ƒfbÓb¿fƒbŸbÏb¨¸(€€€€€€€€€€€€ð½Àø(€€€€€€€€€€¥ô(€€€€€€€€ð½Í•Ñ¥½¸ø((€€€€€€€€ñÍ•Ñ¥½¸±…ÍÍ9…µ”ô‰µÐ´ÔÉ¥É¥µ½±Ì´È…À´Ìˆø(€€€€€€€€€€ñAÉ•Ù¥•Ý…Ð±…‰•°ô‹bçff#bŸfƒb¿bŸb»fn0ˆÙ…±Õ”õí‘É…™Ð¹Ñ¥Ñ±”ñð€‹b«bçf3n3fƒfnÓb¿f‰ô€¼ø(€€€€€€€€€€ñAÉ•Ù¥•Ý…Ð(€€€€€€€€€€€±…‰•°ô‹j§ffón3fˆ(€€€€€€€€€€€Ù…±Õ”õí‘É…™Ð¹…µÁ…¥¹%€ü€‹fb«b×fƒb£fƒj§ffûn3fˆ€è€‹b£b¿f#fƒj§ffûn3f‰ô(€€€€€€€€€€¼ø(€€€€€€€€€€ñAÉ•Ù¥•Ý…Ð(€€€€€€€€€€€±…‰•°ô‹bÇbÏbŸffˆ(€€€€€€€€€€€Ù…±Õ”õí€‘í‘É…™Ð¹µ•‘¥„¹±•¹Ñ ¹Ñ½1½…±•MÑÉ¥¹œ ‰™„µ%Hˆ¥ôƒfbŸn3fô(€€€€€€€€€€¼ø(€€€€€€€€€€ñAÉ•Ù¥•Ý…Ð(€€€€€€€€€€€±…‰•°ô‹b«bn3n3b¼ˆ(€€€€€€€€€€€Ù…±Õ”õí…ÁÁÉ½Ù…±1…‰•°¡‘É…™Ð¹…ÁÁÉ½Ù…±MÑ…ÑÕÌ¥ô(€€€€€€€€€€¼ø(€€€€€€€€ð½Í•Ñ¥½¸ø(€€€€€€ð½‘¥Øø(€€€€ð½…Í¥‘”ø(€€¤ì)ô()™Õ¹Ñ¥½¸AÉ•Ù¥•Ý…Ð¡ì±…‰•°°Ù…±Õ”ôèì±…‰•°èÍÑÉ¥¹œìÙ…±Õ”èÍÑÉ¥¹œô¤ì(€É•ÑÕÉ¸€ (€€€€ñ‘¥Ø±…ÍÍ9…µ”ô‰É½Õ¹‘•´Éá°‰œµÝ¡¥Ñ”¼ÌÔÀ´Ì‘…É¬é‰œµÝ¡¥Ñ”½lÀ¸ÀÌÕtˆø(€€€€€€ñÀ±…ÍÍ9…µ”ô‰Ñ•áÐµlÄÅÁátÑ•áÐµ¥¹¬µÍ•½¹‘…Éäˆùí±…‰•±ôð½Àø(€€€€€€ñÀ±…ÍÍ9…µ”ô‰µÐ´ÄÑÉÕ¹…Ñ”Ñ•áÐµáÌ™½¹ÐµÍ•µ¥‰½±ˆùíÙ…±Õ•ôð½Àø(€€€€ð½‘¥Øø(€€¤ì)ô()™Õ¹Ñ¥½¸…ÁÁÉ½Ù…±1…‰•°¡ÍÑ…ÑÕÌè½µÁ½Í•ÉÉ…™Ñl‰…ÁÁÉ½Ù…±MÑ…ÑÕÌ‰t¤èÍÑÉ¥¹œì(€É•ÑÕÉ¸ì(€€€¹½Ñ}É•ÅÕ¥É•è€‹b£b¿f#fƒfn3bŸbÈˆ°(€€€Á•¹‘¥¹œè€‹b¿bÄƒbŸfb«bãbŸbÄˆ°(€€€…ÁÁÉ½Ù•è€‹b«bn3n3b¿bÓb¿fˆ°(€€€É•©•Ñ•è€‹bÇb¿bÓb¿fˆ°(€õmÍÑ…ÑÕÍtì)ô
+              Ù‡Ù†ÙˆØ² Ù…Ù‚ØµØ¯ÛŒ Ø¨Ø±Ø§ÛŒ Ø§Ù†ØªØ´Ø§Ø± Ø§Ù†ØªØ®Ø§Ø¨ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.
+            </p>
+          )}
+        </section>
+
+        <section className="mt-5 grid grid-cols-2 gap-3">
+          <PreviewFact label="Ø¹Ù†ÙˆØ§Ù† Ø¯Ø§Ø®Ù„ÛŒ" value={draft.title || "ØªØ¹ÛŒÛŒÙ† Ù†Ø´Ø¯Ù‡"} />
+          <PreviewFact
+            label="Ú©Ù…Ù¾ÛŒÙ†"
+            value={draft.campaignId ? "Ù…ØªØµÙ„ Ø¨Ù‡ Ú©Ù…Ù¾ÛŒÙ†" : "Ø¨Ø¯ÙˆÙ† Ú©Ù…Ù¾ÛŒÙ†"}
+          />
+          <PreviewFact
+            label="Ø±Ø³Ø§Ù†Ù‡"
+            value={`${draft.media.length.toLocaleString("fa-IR")} ÙØ§ÛŒÙ„`}
+          />
+          <PreviewFact
+            label="ØªØ£ÛŒÛŒØ¯"
+            value={approvalLabel(draft.approvalStatus)}
+          />
+        </section>
+      </div>
+    </aside>
+  );
+}
+
+function PreviewFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white/35 p-3 dark:bg-white/[0.035]">
+      <p className="text-[11px] text-ink-secondary">{label}</p>
+      <p className="mt-1 truncate text-xs font-semibold">{value}</p>
+    </div>
+  );
+}
+
+function approvalLabel(status: ComposerDraft["approvalStatus"]): string {
+  return {
+    not_required: "Ø¨Ø¯ÙˆÙ† Ù†ÛŒØ§Ø²",
+    pending: "Ø¯Ø± Ø§Ù†ØªØ¸Ø§Ø±",
+    approved: "ØªØ£ÛŒÛŒØ¯Ø´Ø¯Ù‡",
+    rejected: "Ø±Ø¯Ø´Ø¯Ù‡",
+  }[status];
+}
