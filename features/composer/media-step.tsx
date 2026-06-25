@@ -75,9 +75,13 @@ export function MediaStep({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <ImagePlus className="size-8 text-ink-secondary" aria-hidden="true" />
+                  <ImagePlus
+                    className="size-8 text-ink-secondary"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
+
               <div className="flex items-center gap-3 p-3">
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{media.name}</p>
@@ -89,7 +93,7 @@ export function MediaStep({
                   type="button"
                   aria-label={`حذف ${media.name}`}
                   onClick={() => onRemoveMedia(media)}
-                  className="grid size-10 place-items-center rounded-xl text-rose-700 hover:bg-rose-500/10 dark:text-rose-300"
+                  className="grid size-10 place-items-center rounded-xl text-rose-700 hover:bg-rose-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/35 dark:text-rose-300"
                 >
                   <Trash2 className="size-4" aria-hidden="true" />
                 </button>
@@ -99,9 +103,18 @@ export function MediaStep({
         </div>
       ) : (
         <div className="rounded-2xl border border-[var(--n-panel-divider)] bg-white/25 p-5 text-center dark:bg-white/[0.025]">
-          <MessageSquareText className="mx-auto size-6 text-ink-secondary" aria-hidden="true" />
-          <p className="mt-3 text-sm font-semibold">هنوز رسانه‌ای انتخاب نشده است</p>
+          <MessageSquareText
+            className="mx-auto size-6 text-ink-secondary"
+            aria-hidden="true"
+          />
+          <p className="mt-3 text-sm font-semibold">
+            هنوز رسانه‌ای انتخاب نشده است
+          </p>
           <p className="mt-2 text-xs text-ink-secondary">
-            پیش‌نمایش متن همچنان در کنار فرم قابل مض)�a�+�a�6)�,�*�������]���
-_B��]���
-NB
+            پیش‌نمایش متن همچنان در کنار فرم قابل مشاهده است.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
