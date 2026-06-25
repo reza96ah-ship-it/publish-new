@@ -1,1 +1,5 @@
-# publish-new
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
