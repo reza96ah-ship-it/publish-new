@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+  --color-canvas: var(--n-canvas);
+  --color-ink-primary: var(--n-text-primary);
+  --color-ink-secondary: var(--n-text-secondary);
+  --color-accent: var(--n-accent);
+  --color-success: var(--n-success);
+  --color-warning: var(--n-warning);
+  --color-danger: var(--n-danger);
+  --radius-panel: 1.75rem;
+  --radius-control: 1rem;
+}
+
+:root {
+  color-scheme: light;
+  --n-canvas: oklch(0.976 0.008 255);
+  --n-text-primary: rgb(15 23 42 / 0.95);
+  --n-text-secondary: rgb(30 41 59 / 0.68);
+  --n-accent: oklch(0.61 0.19 263);
+  --n-success: oklch(0.62 0.17 153);
+  --n-warning: oklch(0.72 0.16 76);
+  --n-danger: oklch(0.61 0.22 27);
+  --n-panel-bg: rgb(255 255 255 / 0.86);
+  --n-panel-border: rgb(255 255 255 / 0.82);
+  --n-panel-divider: rgb(30 41 59 / 0.08);
+  --n-control-bg: rgb(255 255 255 / 0.56);
+  --n-control-border: rgb(255 255 255 / 0.72);
+  --n-shadow-panel: 0 12px 36px rgb(15 23 42 / 0.07);
+  --n-shadow-floating: 0 18px 48px rgb(15 23 42 / 0.12);
+}
+
+.dark {
+  color-scheme: dark;
+  --n-canvas: oklch(0.155 0.022 258);
+  --n-text-primary: rgb(248 250 252 / 0.96);
+  --n-text-secondary: rgb(226 232 240 / 0.72);
+  --n-accent: oklch(0.72 0.15 259);
+  --n-success: oklch(0.72 0.16 151);
+  --n-warning: oklch(0.79 0.15 78);
+  --n-danger: oklch(0.7 0.2 25);
+  --n-panel-bg: rgb(22 29 43 / 0.88);
+  --n-panel-border: rgb(255 255 255 / 0.1);
+  --n-panel-divider: rgb(255 255 255 / 0.075);
+  --n-control-bg: rgb(28 36 53 / 0.62);
+  --n-control-border: rgb(255 255 255 / 0.13);
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  button, input, textarea, select { font: inherit; }
+}
+
+@layer components {
+  .ambient-mesh {
+    background: radial-gradient(60rem 48rem at 105% -5%, oklch(0.84 0.09 248 / 0.24), transparent 70%), radial-gradient(54rem 44rem at -5% 30%, oklch(0.88 0.07 302 / 0.18), transparent 72%), var(--n-canvas);
+  }
+  .n-panel {
+    border: 1px solid var(--n-panel-border);
+    border-radius: var(--radius-panel);
+    background: var(--n-panel-bg);
+    box-shadow: var(--n-shadow-panel);
+    backdrop-filter: blur(12px) saturate(1.08);
+  }
+  .n-glass-control {
+    border: 1px solid var(--n-control-border);
+    background: var(--n-control-bg);
+    box-shadow: var(--n-shadow-floating);
+    backdrop-filter: blur(28px) saturate(1.4);
+  }
+}
