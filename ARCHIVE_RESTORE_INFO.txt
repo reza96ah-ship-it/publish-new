@@ -1,0 +1,2 @@
+Detected project root: .restore
+Restored file count: 120

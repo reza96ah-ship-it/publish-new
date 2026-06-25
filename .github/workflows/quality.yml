@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "phase-*"
+      - phase-0-stabilize
   pull_request:
     branches:
       - main

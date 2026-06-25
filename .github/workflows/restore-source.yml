@@ -1,0 +1,63 @@
+name: Restore original source archive
+
+on:
+  push:
+    branches:
+      - source-archive
+    paths:
+      - publisher.zip
+      - .github/workflows/restore-source.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout archive branch
+        uses: actions/checkout@v4
+
+      - name: Extract project source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .restore restored-source ARCHIVE_TREE.txt
+          mkdir -p .restore
+          unzip -q publisher.zip -d .restore
+
+          PROJECT_ROOT="$(find .restore -type f -name package.json -not -path '*/node_modules/*' -printf '%h\n' | head -n 1)"
+          if [ -z "$PROJECT_ROOT" ]; then
+            echo "Could not locate a project package.json inside publisher.zip" >&2
+            exit 1
+          fi
+
+          mkdir -p restored-source
+          rsync -a \
+            --exclude node_modules \
+            --exclude .next \
+            --exclude .git \
+            --exclude coverage \
+            "$PROJECT_ROOT"/ restored-source/
+
+          find restored-source -type f -printf '%P\n' | sort > ARCHIVE_TREE.txt
+          printf 'Detected project root: %s\n' "$PROJECT_ROOT" > ARCHIVE_RESTORE_INFO.txt
+          printf 'Restored file count: %s\n' "$(wc -l < ARCHIVE_TREE.txt)" >> ARCHIVE_RESTORE_INFO.txt
+
+      - name: Commit restored source snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add restored-source ARCHIVE_TREE.txt ARCHIVE_RESTORE_INFO.txt
+
+          if git diff --cached --quiet; then
+            echo "No restored-source changes to commit"
+            exit 0
+          fi
+
+          git commit -m "chore: extract original publisher source archive"
+          git push origin HEAD:source-archive
